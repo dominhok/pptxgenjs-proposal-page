@@ -14,7 +14,7 @@
 | OfficeCLI | Available on `PATH` or `%LOCALAPPDATA%\OfficeCLI\officecli.exe` | Office inspection, OOXML validation, issue detection, and rendering |
 | Microsoft PowerPoint | 2021 or later | Authoritative native render for final visual QA |
 | Pretendard | Installed for the current Windows environment | Required Korean typography |
-| `pptx-visual-proofreader` | Sibling skill directory or repository root | Layout linting and filled-panel crop review |
+| `pptx-visual-proofreader` | Bundled under `dependencies/` or installed as a sibling skill | Layout linting and filled-panel crop review |
 
 Run the preflight once per environment:
 
@@ -49,7 +49,7 @@ pptxgenjs-proposal-page
 ├─ OfficeCLI
 ├─ Microsoft PowerPoint 2021+
 ├─ Pretendard
-└─ co-located skill: pptx-visual-proofreader
+└─ bundled dependency: dependencies/pptx-visual-proofreader
    ├─ scripts/pptx_layout_lint.py
    └─ scripts/render_card_crops.ps1
 ```

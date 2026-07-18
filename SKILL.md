@@ -16,7 +16,7 @@ Create one editable proposal slide for each requested numbered subsection. Keep 
 5. Read [references/proofreader-gate.md](references/proofreader-gate.md) before selecting output folders or running QA.
 6. Read [references/reference-inventory.md](references/reference-inventory.md) when choosing among bundled reference decks.
 7. Read [references/request-prompt.md](references/request-prompt.md) when converting an informal request into a build contract.
-8. Load the co-located `pptx-visual-proofreader` skill and its `officecli` companion before using their inspection, rendering, or correction workflows. It may be installed as a sibling skill or provided at the repository root.
+8. Load the bundled `dependencies/pptx-visual-proofreader/SKILL.md` and its `officecli` companion before using their inspection, rendering, or correction workflows. A separately installed sibling `pptx-visual-proofreader` skill remains supported for development overrides.
 
 Use `assets/pptxgenjs-kit/` as the build starter. Do not rewrite the shared helpers for each page.
 

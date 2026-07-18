@@ -37,7 +37,7 @@ $skillRoot = Split-Path $PSScriptRoot -Parent
 $skillsRoot = Split-Path $skillRoot -Parent
 $proofreaderRoot = Join-Path $skillsRoot 'pptx-visual-proofreader'
 if (-not (Test-Path -LiteralPath (Join-Path $proofreaderRoot 'scripts\pptx_layout_lint.py') -PathType Leaf)) {
-    $proofreaderRoot = $skillsRoot
+    $proofreaderRoot = Join-Path $skillRoot 'dependencies\pptx-visual-proofreader'
 }
 $linter = Join-Path $proofreaderRoot 'scripts\pptx_layout_lint.py'
 $cropScript = Join-Path $proofreaderRoot 'scripts\render_card_crops.ps1'
