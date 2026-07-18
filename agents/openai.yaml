@@ -1,0 +1,4 @@
+interface:
+  display_name: "PptxGenJS 제안서 페이지"
+  short_description: "내용 기반 레이아웃의 편집 가능한 제안서 PPTX 생성"
+  default_prompt: "$pptxgenjs-proposal-page를 사용해 번호가 있는 DOCX 절을 A4 세로형 제안서 PPTX로 만들고, 내용 관계에 맞는 레이아웃과 렌더 기반 QA를 적용해 주세요."

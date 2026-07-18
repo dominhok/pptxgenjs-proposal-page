@@ -1,0 +1,16 @@
+{
+  "name": "pptxgenjs-proposal-page-work",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "build": "node page-template.mjs"
+  },
+  "dependencies": {
+    "jszip": "3.10.1",
+    "pptxgenjs": "4.0.1"
+  }
+}
