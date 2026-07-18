@@ -234,8 +234,8 @@ export function addChrome(slide, pptx, options) {
   addShape(slide, pptx, { name: "TopRule", x: 0, y: 0, w: 7.5, h: 0.06, fill: COLOR.cyan, line: "none" });
   addShape(slide, pptx, { name: "ChapterBlock", x: 0, y: 0.18, w: 1.24, h: 0.72, shape: "parallelogram", fill: COLOR.navy, line: "none" });
   addShape(slide, pptx, { name: "SectionRibbon", x: 1.08, y: 0.18, w: 4.58, h: 0.72, shape: "parallelogram", fill: COLOR.blue, line: "none" });
-  addText(slide, pptx, "CH.", { name: "ChapterLabel", x: 0.10, y: 0.28, w: 0.46, h: 0.20, fontSize: 10, bold: true, color: COLOR.white, valign: "mid" });
-  addText(slide, pptx, options.chapter, { name: "SectionCode", x: 0.10, y: 0.48, w: 0.80, h: 0.31, fontSize: 20, bold: true, color: COLOR.white, valign: "mid" });
+  addText(slide, pptx, "CH.", { name: "ChapterLabel", x: 0.22, y: 0.28, w: 0.46, h: 0.20, fontSize: 10, bold: true, color: COLOR.white, valign: "mid" });
+  addText(slide, pptx, options.chapter, { name: "SectionCode", x: 0.22, y: 0.48, w: 0.68, h: 0.31, fontSize: 20, bold: true, color: COLOR.white, valign: "mid" });
   addText(slide, pptx, options.sectionTitle, { name: "SectionTitle", x: 1.42, y: 0.36, w: 3.72, h: 0.34, fontSize: 14, bold: true, color: COLOR.white, valign: "mid", align: "center" });
   addText(slide, pptx, "KISTI", { name: "KistiMark", x: 6.25, y: 0.30, w: 0.78, h: 0.30, fontSize: 14, bold: true, color: COLOR.navy, align: "right", valign: "mid" });
   addShape(slide, pptx, { name: "ProjectRibbon", x: 3.68, y: 1.00, w: 3.82, h: 0.25, shape: "parallelogram", fill: COLOR.blue, line: "none" });

@@ -1,6 +1,7 @@
 // Verified layout families used as implementation references.
 import fs from "node:fs";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 import {
   COLOR, REGION, addArrow, addChrome, addIconBadge, addKeyMessage, addLine,
   addPanel, addRichCard, addSectionLabel, addShape, addText,
@@ -9,6 +10,8 @@ import {
 
 const outDir = path.resolve(process.argv[2] ?? "../draft");
 fs.mkdirSync(outDir, { recursive: true });
+const here = path.dirname(fileURLToPath(import.meta.url));
+const referenceMedia = (name) => path.join(here, "reference-media", name);
 
 const softBy = {
   [COLOR.blue]: COLOR.blueSoft,
@@ -248,6 +251,110 @@ async function reviewWorkflowPage() {
   });
   addKeyMessage(slide, pptx, "AI는 단계별 초안과 근거를 제공하고, 전문가는 검토·판단·승인을 통해 예산심의 책임성을 유지합니다.");
   return { pptx, file: "I-2-2.pptx" };
+}
+
+async function photoEvidencePage() {
+  const meta = {
+    chapter: "I", sectionTitle: "사업수행계획 부문", pageNo: 13,
+    title: "전문가 참여형 RAG·LLM 업무시스템 구축 경험",
+    subtitle: "역할 기반 전문가 포털부터 AI 초안·검토·확정·데이터셋 산출까지 실제 운영 경험 보유"
+  };
+  const { pptx, slide } = baseSlide(meta);
+
+  addSectionLabel(slide, pptx, "검증된 End-to-End 운영 흐름", {
+    name: tag(REGION.flow, "FlowLabel"), x: 0.42, y: 2.17, w: 2.42
+  });
+  addText(slide, pptx, "전문가 참여형 Human-in-the-Loop 운영 증거", {
+    name: tag(REGION.support, "FlowQualifier"), x: 4.08, y: 2.17, w: 3.00, h: 0.30,
+    fontSize: 10, bold: true, color: COLOR.muted, align: "right", valign: "mid"
+  });
+  addPanel(slide, pptx, {
+    name: tag(REGION.flow, "WorkflowPanel"), x: 0.42, y: 2.53, w: 6.66, h: 3.33,
+    fill: COLOR.panel, line: { color: COLOR.line, width: 0.8 }
+  });
+
+  const stages = [
+    { title: "전문가 참여", body: "역할·권한 기반 진입", color: COLOR.teal, x: 0.65, y: 2.83 },
+    { title: "RAG 검색", body: "키워드·벡터 연계", color: COLOR.blue, x: 2.86, y: 2.83 },
+    { title: "AI 초안 생성", body: "정의·검색식·분석안", color: COLOR.purple, x: 5.07, y: 2.83 },
+    { title: "전문가 검토", body: "판단·수정·보완", color: COLOR.teal, x: 5.07, y: 4.18 },
+    { title: "결과 확정", body: "상태·변경이력 관리", color: COLOR.teal, x: 2.86, y: 4.18 },
+    { title: "데이터셋 산출", body: "검증·적재·재활용", color: COLOR.green, x: 0.65, y: 4.18 }
+  ];
+  const links = [
+    { x: 2.20, y: 3.26, w: 0.66, h: 0, color: COLOR.blue, endArrowType: "triangle" },
+    { x: 4.41, y: 3.26, w: 0.66, h: 0, color: COLOR.blue, endArrowType: "triangle" },
+    { x: 5.85, y: 3.68, w: 0, h: 0.50, color: COLOR.purple, endArrowType: "triangle" },
+    { x: 4.41, y: 4.61, w: 0.66, h: 0, color: COLOR.teal, beginArrowType: "triangle" },
+    { x: 2.20, y: 4.61, w: 0.66, h: 0, color: COLOR.teal, beginArrowType: "triangle" }
+  ];
+  links.forEach((link, index) => addLine(slide, pptx, {
+    name: tag(REGION.flow, `Arrow${index + 1}`), ...link, width: 1.7
+  }));
+  stages.forEach((stage, index) => addRichCard(slide, pptx, {
+    name: tag(REGION.flow, `Stage${index + 1}`),
+    title: `${String(index + 1).padStart(2, "0")}  ${stage.title}`,
+    body: stage.body, x: stage.x, y: stage.y, w: 1.55, h: 0.86,
+    fill: COLOR.white, line: { color: stage.color, width: 1.0 }, accent: stage.color,
+    titleSize: 11, bodySize: 10, margin: [10, 7, 7, 7], valign: "mid"
+  }));
+
+  const controls = [
+    { text: "역할·권한 분리", x: 0.65, fill: COLOR.blueSoft, color: COLOR.blue },
+    { text: "AI 초안 + 전문가 확정", x: 2.68, fill: COLOR.purpleSoft, color: COLOR.purple },
+    { text: "검토·변경이력", x: 4.71, fill: COLOR.tealSoft, color: COLOR.teal }
+  ];
+  controls.forEach((item, index) => addText(slide, pptx, item.text, {
+    name: tag(REGION.flow, `Control${index + 1}`), x: item.x, y: 5.31, w: 1.86, h: 0.35,
+    shape: "roundRect", fill: item.fill, line: { color: item.color, width: 0.8 },
+    fontSize: 10, bold: true, color: item.color, align: "center", valign: "mid", margin: 0
+  }));
+
+  addSectionLabel(slide, pptx, "실제 운영 화면 증거", {
+    name: tag(REGION.support, "EvidenceLabel"), x: 0.42, y: 6.10, w: 1.76
+  });
+  addText(slide, pptx, "전문가 업무포털과 RAG 분석 화면을 통해 구현·운영 사실을 확인", {
+    name: tag(REGION.support, "EvidenceQualifier"), x: 3.25, y: 6.10, w: 3.83, h: 0.30,
+    fontSize: 10, bold: true, color: COLOR.muted, align: "right", valign: "mid"
+  });
+  const evidencePanels = [
+    {
+      name: "ExpertDashboard", title: "01  전문가 대시보드 · 자문 시작",
+      x: 0.42, color: COLOR.blue, soft: COLOR.blueSoft,
+      image: referenceMedia("expert-dashboard.png"), imageX: 0.51, imageY: 7.10,
+      imageW: 3.05, imageH: 1.69,
+      alt: "전문가 참여 시스템 대시보드와 1차 자문 시작 화면"
+    },
+    {
+      name: "RagReview", title: "02  RAG 초안 · 관련 논문 선택",
+      x: 3.86, color: COLOR.teal, soft: COLOR.tealSoft,
+      image: referenceMedia("rag-review.jpeg"), imageX: 3.95, imageY: 7.32,
+      imageW: 3.04, imageH: 1.45,
+      alt: "RAG 기반 설명 초안과 관련 논문 선택 화면"
+    }
+  ];
+  evidencePanels.forEach((panel) => {
+    addPanel(slide, pptx, {
+      name: tag(REGION.support, `${panel.name}Panel`), x: panel.x, y: 6.48, w: 3.22, h: 2.53,
+      fill: COLOR.white, line: { color: COLOR.line, width: 0.9 }
+    });
+    addText(slide, pptx, panel.title, {
+      name: tag(REGION.support, `${panel.name}Title`), x: panel.x + 0.13, y: 6.61, w: 2.96, h: 0.32,
+      shape: "roundRect", fill: panel.soft, line: "none", fontSize: 10, bold: true,
+      color: panel.color, align: "center", valign: "mid", margin: 0
+    });
+    slide.addImage({
+      path: panel.image, x: panel.imageX, y: panel.imageY, w: panel.imageW, h: panel.imageH,
+      objectName: tag(REGION.support, `${panel.name}Image`), altText: panel.alt
+    });
+  });
+
+  addKeyMessage(
+    slide,
+    pptx,
+    "전문가 참여부터 RAG·LLM 분석·검수·데이터셋 확정까지 End-to-End 업무시스템 구축·운영 경험 보유"
+  );
+  return { pptx, file: "I-1-3.pptx" };
 }
 
 async function deliverablePage() {
@@ -507,7 +614,7 @@ async function qualityPage() {
   return { pptx, file: "III-2-1.pptx" };
 }
 
-const builders = [architecturePage, boundaryPage, reviewWorkflowPage, deliverablePage, testGatePage, incidentPage, qualityPage];
+const builders = [architecturePage, boundaryPage, reviewWorkflowPage, photoEvidencePage, deliverablePage, testGatePage, incidentPage, qualityPage];
 const written = [];
 for (const build of builders) {
   if (process.env.SAMPLE_ONLY && build.name !== process.env.SAMPLE_ONLY) continue;

@@ -19,7 +19,7 @@ Create one editable proposal slide for each requested numbered subsection. Keep 
 8. Load the bundled `dependencies/pptx-visual-proofreader/SKILL.md` and its `officecli` companion before using their inspection, rendering, or correction workflows. A separately installed sibling `pptx-visual-proofreader` remains supported as a development override.
 9. Read [references/reference-led-patterns.md](references/reference-led-patterns.md) when a batch must combine several reference-slide families or needs a verified varied-layout example set.
 
-Use `scripts/scaffold-page.ps1` as the only build starter. It copies the locked Node dependencies, approved proposal chrome, single-page template, and seven-layout pattern library. Do not create a parallel starter or rewrite shared helpers for each page.
+Use `scripts/scaffold-page.ps1` as the only build starter. It copies the locked Node dependencies, approved proposal chrome, single-page template, reference media, and verified layout pattern library. Do not create a parallel starter or rewrite shared helpers for each page.
 
 ## Tool and output contract
 

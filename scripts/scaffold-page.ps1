@@ -23,6 +23,7 @@ Copy-Item -LiteralPath (Join-Path $kit 'repair-pptxgenjs-ooxml.mjs') -Destinatio
 Copy-Item -LiteralPath (Join-Path $kit 'proposal-kit.mjs') -Destination $target -Force
 Copy-Item -LiteralPath (Join-Path $kit 'page-template.mjs') -Destination $target -Force
 Copy-Item -LiteralPath (Join-Path $kit 'reference-layouts.mjs') -Destination $target -Force
+Copy-Item -LiteralPath (Join-Path $kit 'reference-media') -Destination $target -Recurse -Force
 
 if ($InstallDependencies) {
     $npm = (Get-Command npm.cmd -ErrorAction SilentlyContinue).Source
