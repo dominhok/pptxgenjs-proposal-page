@@ -16,9 +16,10 @@ Create one editable proposal slide for each requested numbered subsection. Keep 
 5. Read [references/proofreader-gate.md](references/proofreader-gate.md) before selecting output folders or running QA.
 6. Read [references/reference-inventory.md](references/reference-inventory.md) when choosing among bundled reference decks.
 7. Read [references/request-prompt.md](references/request-prompt.md) when converting an informal request into a build contract.
-8. Load the bundled `dependencies/pptx-visual-proofreader/SKILL.md` and its `officecli` companion before using their inspection, rendering, or correction workflows. A separately installed sibling `pptx-visual-proofreader` skill remains supported for development overrides.
+8. Load the bundled `dependencies/pptx-visual-proofreader/SKILL.md` and its `officecli` companion before using their inspection, rendering, or correction workflows. A separately installed sibling `pptx-visual-proofreader` remains supported as a development override.
+9. Read [references/reference-led-patterns.md](references/reference-led-patterns.md) when a batch must combine several reference-slide families or needs a verified varied-layout example set.
 
-Use `assets/pptxgenjs-kit/` as the build starter. Do not rewrite the shared helpers for each page.
+Use `scripts/scaffold-page.ps1` as the only build starter. It copies the locked Node dependencies, approved proposal chrome, single-page template, and seven-layout pattern library. Do not create a parallel starter or rewrite shared helpers for each page.
 
 ## Tool and output contract
 
@@ -67,7 +68,7 @@ For three or more sibling pages, write a batch layout assignment table before co
 
 ### 4. Build with the PptxGenJS kit
 
-1. Run `scripts/scaffold-page.ps1` to copy the starter and locked npm dependencies into a writable work directory.
+1. Run `scripts/scaffold-page.ps1` to copy the approved starter and locked npm dependencies into a writable work directory.
 2. Implement the selected content model in the copied `page-template.mjs` and add reusable layout modules when a pattern will recur.
 3. Keep common chrome in shared helpers and body coordinates in content-specific layout functions.
 4. Use text-bearing shapes for cards and labels rather than layering a separate text box over a background shape for the same component.

@@ -25,6 +25,60 @@ function Get-CommandPath {
     return $null
 }
 
+function Resolve-PythonRuntime {
+    $candidates = [System.Collections.Generic.List[object]]::new()
+
+    foreach ($name in @('python.exe', 'python', 'py.exe', 'py')) {
+        $command = Get-Command $name -ErrorAction SilentlyContinue
+        if ($command) {
+            $prefix = if ($name -like 'py*') { @('-3') } else { @() }
+            $candidates.Add([pscustomobject]@{ Path = $command.Source; Prefix = $prefix })
+        }
+    }
+
+    $installRoots = @(
+        (Join-Path $env:LOCALAPPDATA 'Programs\Python'),
+        (Join-Path $env:ProgramFiles 'Python')
+    ) | Where-Object { $_ -and (Test-Path -LiteralPath $_ -PathType Container) }
+    foreach ($root in $installRoots) {
+        foreach ($directory in Get-ChildItem -LiteralPath $root -Directory -ErrorAction SilentlyContinue | Sort-Object Name -Descending) {
+            $candidatePath = Join-Path $directory.FullName 'python.exe'
+            if (Test-Path -LiteralPath $candidatePath -PathType Leaf) {
+                $candidates.Add([pscustomobject]@{ Path = $candidatePath; Prefix = @() })
+            }
+        }
+    }
+
+    $seen = @{}
+    foreach ($candidate in $candidates) {
+        $key = "$($candidate.Path)|$($candidate.Prefix -join ' ')"
+        if ($seen.ContainsKey($key)) { continue }
+        $seen[$key] = $true
+
+        $previousPreference = $ErrorActionPreference
+        $ErrorActionPreference = 'Continue'
+        try {
+            $versionOutput = @(& $candidate.Path @($candidate.Prefix) -c 'import platform; print(platform.python_version())' 2>$null)
+            $exitCode = $LASTEXITCODE
+        }
+        catch {
+            $versionOutput = @()
+            $exitCode = 1
+        }
+        finally {
+            $ErrorActionPreference = $previousPreference
+        }
+        if ($exitCode -eq 0 -and $versionOutput.Count -gt 0) {
+            return [pscustomobject]@{
+                Path = $candidate.Path
+                Prefix = @($candidate.Prefix)
+                Version = $versionOutput[-1].ToString().Trim()
+            }
+        }
+    }
+    return $null
+}
+
 $psPass = $PSVersionTable.PSVersion -ge [version]'5.1'
 Add-Check 'PowerShell' $psPass $PSVersionTable.PSVersion.ToString() '5.1+'
 
@@ -37,15 +91,10 @@ $npm = Get-CommandPath @('npm.cmd', 'npm')
 $npmVersion = if ($npm) { (& $npm --version).Trim() } else { '' }
 Add-Check 'npm' ([bool]$npm) $(if ($npm) { "$npmVersion | $npm" } else { 'not found' }) 'available'
 
-$python = Get-CommandPath @('python.exe', 'python')
-$pythonPrefix = @()
-if (-not $python) {
-    $python = Get-CommandPath @('py.exe', 'py')
-    if ($python) { $pythonPrefix = @('-3') }
-}
-$pythonVersion = if ($python) { (& $python @pythonPrefix -c 'import platform; print(platform.python_version())').Trim() } else { '' }
+$python = Resolve-PythonRuntime
+$pythonVersion = if ($python) { $python.Version } else { '' }
 $pythonPass = $python -and ([version]$pythonVersion -ge [version]'3.10.0')
-Add-Check 'Python' ([bool]$pythonPass) $(if ($python) { "$pythonVersion | $python" } else { 'not found' }) '3.10+'
+Add-Check 'Python' ([bool]$pythonPass) $(if ($python) { "$pythonVersion | $($python.Path)" } else { 'not found or not executable' }) '3.10+'
 
 $officeCli = Get-CommandPath @('officecli.exe', 'officecli')
 if (-not $officeCli) {
@@ -102,6 +151,10 @@ if (-not (Test-Path -LiteralPath (Join-Path $proofreaderRoot 'scripts\pptx_layou
 $requiredFiles = @(
     (Join-Path $skillRoot 'assets\pptxgenjs-kit\package.json'),
     (Join-Path $skillRoot 'assets\pptxgenjs-kit\package-lock.json'),
+    (Join-Path $skillRoot 'assets\pptxgenjs-kit\repair-pptxgenjs-ooxml.mjs'),
+    (Join-Path $skillRoot 'assets\pptxgenjs-kit\proposal-kit.mjs'),
+    (Join-Path $skillRoot 'assets\pptxgenjs-kit\page-template.mjs'),
+    (Join-Path $skillRoot 'assets\pptxgenjs-kit\reference-layouts.mjs'),
     (Join-Path $proofreaderRoot 'scripts\pptx_layout_lint.py'),
     (Join-Path $proofreaderRoot 'scripts\render_card_crops.ps1')
 )

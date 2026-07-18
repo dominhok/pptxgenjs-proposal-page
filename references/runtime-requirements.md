@@ -14,7 +14,7 @@
 | OfficeCLI | Available on `PATH` or `%LOCALAPPDATA%\OfficeCLI\officecli.exe` | Office inspection, OOXML validation, issue detection, and rendering |
 | Microsoft PowerPoint | 2021 or later | Authoritative native render for final visual QA |
 | Pretendard | Installed for the current Windows environment | Required Korean typography |
-| `pptx-visual-proofreader` | Bundled under `dependencies/` or installed as a sibling skill | Layout linting and filled-panel crop review |
+| `pptx-visual-proofreader` | Bundled under `dependencies/`; sibling skill is an optional development override | Layout linting and filled-panel crop review |
 
 Run the preflight once per environment:
 

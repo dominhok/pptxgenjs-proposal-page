@@ -2,61 +2,134 @@ import {
   COLOR,
   REGION,
   addArrow,
-  addCard,
   addChrome,
-  addIconSvg,
+  addIconBadge,
+  addKeyMessage,
   addPanel,
-  addShape,
-  addTextShape,
+  addRichCard,
+  addSectionLabel,
+  addText,
   createProposalDeck,
+  svgData,
   tag,
   writeDeck
 } from "./proposal-kit.mjs";
 
-const output = process.argv[2] ?? "2-3-1.pptx";
-const pptx = createProposalDeck({ title: "전체 기술 아키텍처" });
+// Default proposal starter. Replace this body with a content-routed layout.
+// Use reference-layouts.mjs as a pattern library; do not repeat this 2x2
+// composition when the source relationship is sequential, hierarchical, or cyclic.
+const output = process.argv[2] ?? "II-1-2.pptx";
+const pptx = createProposalDeck({ title: "공통 설계원칙 및 서비스 경계" });
 const slide = pptx.addSlide();
-slide.background = { color: COLOR.white };
 
 addChrome(slide, pptx, {
-  section: "2.3.1",
-  title: "전체 기술 아키텍처",
-  subtitle: "민간 AI Agent부터 정부공통 MCP와 개방기관 API까지 이어지는 공공 AI 연계 구조"
+  chapter: "II",
+  sectionTitle: "기술 및 기능 · 설계원칙",
+  pageNo: 2,
+  title: "공통 설계원칙 및 서비스 경계",
+  subtitle: "책임 응집도와 변경주기를 기준으로 서비스 경계를 정의하고 연계 계약을 표준화"
 });
 
-addTextShape(slide, pptx, "핵심 연계 구조", {
-  name: tag(REGION.flow, "Label"),
-  x: 0.58,
-  y: 1.40,
-  w: 1.42,
-  h: 0.31,
+const softBy = {
+  [COLOR.blue]: COLOR.blueSoft,
+  [COLOR.purple]: COLOR.purpleSoft,
+  [COLOR.teal]: COLOR.tealSoft,
+  [COLOR.green]: COLOR.greenSoft,
+  [COLOR.amber]: COLOR.amberSoft
+};
+
+function stageNode(item, index, x) {
+  addText(slide, pptx, item.label, {
+    name: tag(REGION.flow, `Stage${index + 1}`),
+    x,
+    y: 2.62,
+    w: 1.12,
+    h: 0.70,
+    shape: "roundRect",
+    fill: softBy[item.color],
+    line: { color: item.color, width: 0.9 },
+    fontSize: 10,
+    bold: true,
+    color: item.color,
+    align: "center",
+    valign: "mid",
+    margin: [4, 4, 4, 4]
+  });
+  const number = String(index + 1).padStart(2, "0");
+  const badge = `<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48"><circle cx="24" cy="24" r="22" fill="#${item.color}"/><text x="24" y="29" text-anchor="middle" font-family="Arial" font-size="18" font-weight="700" fill="#FFFFFF">${number}</text></svg>`;
+  slide.addImage({
+    data: svgData(badge),
+    x: x + 0.07,
+    y: 2.50,
+    w: 0.30,
+    h: 0.30,
+    objectName: tag(REGION.flow, `StageNo${index + 1}`),
+    altText: tag(REGION.flow, `StageNo${index + 1}`)
+  });
+}
+
+addSectionLabel(slide, pptx, "Backend Service Chain", {
+  name: tag(REGION.flow, "ChainLabel"),
+  x: 0.42,
+  y: 2.18,
+  w: 1.58
+});
+
+const services = [
+  { label: "Service", color: COLOR.blue },
+  { label: "Meeting", color: COLOR.teal },
+  { label: "ETL", color: COLOR.amber },
+  { label: "Generation", color: COLOR.purple },
+  { label: "LLM Gateway", color: COLOR.green }
+];
+services.forEach((service, index) => {
+  const x = 0.44 + index * 1.34;
+  stageNode(service, index, x);
+  if (index < services.length - 1) {
+    addArrow(slide, pptx, {
+      name: tag(REGION.flow, `Arrow${index + 1}`),
+      x: x + 1.14,
+      y: 2.89,
+      w: 0.17,
+      h: 0.13,
+      fill: COLOR.blue
+    });
+  }
+});
+
+addPanel(slide, pptx, {
+  name: tag(REGION.flow, "BoundaryFrame"),
+  x: 0.42,
+  y: 3.56,
+  w: 6.66,
+  h: 5.38,
+  fill: COLOR.panel
+});
+addText(slide, pptx, "실용적 서비스 경계", {
+  name: tag(REGION.flow, "BoundaryHub"),
+  x: 2.17,
+  y: 3.79,
+  w: 3.16,
+  h: 0.66,
   shape: "roundRect",
-  fill: COLOR.white,
-  line: { color: COLOR.line, width: 0.8 },
-  fontSize: 12,
+  fill: COLOR.navy,
+  line: "none",
+  fontSize: 14,
   bold: true,
-  color: COLOR.navy,
+  color: COLOR.white,
   align: "center",
   valign: "mid",
   margin: 0
 });
-addPanel(slide, pptx, {
-  name: tag(REGION.flow, "Panel"),
-  x: 0.42,
-  y: 1.76,
-  w: 6.66,
-  h: 1.94,
-  fill: COLOR.panel
-});
-addTextShape(slide, pptx, "민간 Agent 요청을 정부 MCP Gateway가 인증·정책검사 후 서비스별 MCP Server로 중계", {
-  name: tag(REGION.flow, "Banner"),
-  x: 0.69,
-  y: 1.88,
-  w: 5.78,
-  h: 0.26,
-  shape: "rect",
+addText(slide, pptx, "하나의 MySQL · 5개 Schema", {
+  name: tag(REGION.flow, "DataBoundary"),
+  x: 1.58,
+  y: 4.50,
+  w: 2.20,
+  h: 0.31,
+  shape: "roundRect",
   fill: COLOR.blueSoft,
-  line: { color: COLOR.line, width: 0.6 },
+  line: { color: COLOR.blue, width: 0.8 },
   fontSize: 10,
   bold: true,
   color: COLOR.blue,
@@ -64,257 +137,75 @@ addTextShape(slide, pptx, "민간 Agent 요청을 정부 MCP Gateway가 인증·
   valign: "mid",
   margin: 0
 });
+addText(slide, pptx, "REST 동기 · Kafka 비동기", {
+  name: tag(REGION.flow, "ContractBoundary"),
+  x: 3.94,
+  y: 4.50,
+  w: 1.98,
+  h: 0.31,
+  shape: "roundRect",
+  fill: COLOR.tealSoft,
+  line: { color: COLOR.teal, width: 0.8 },
+  fontSize: 10,
+  bold: true,
+  color: COLOR.teal,
+  align: "center",
+  valign: "mid",
+  margin: 0
+});
 
-const flowNodes = [
-  { title: "민간 AI Agent", body: "요청·Tool 탐색", x: 0.64, fill: COLOR.blueSoft, accent: COLOR.blue, icon: "agent" },
-  { title: "정부 MCP Gateway", body: "인증·정책·Routing", x: 2.27, fill: COLOR.purpleSoft, accent: COLOR.purple, icon: "gateway" },
-  { title: "서비스별 MCP", body: "Tool·Adapter·검증", x: 3.90, fill: COLOR.tealSoft, accent: COLOR.teal, icon: "server" },
-  { title: "DSP·기관 API", body: "암복호화·결과반환", x: 5.53, fill: COLOR.amberSoft, accent: COLOR.amber, icon: "api" }
+const principles = [
+  { title: "01  책임 응집도 우선", body: "책임·변경주기·장애영향을 기준으로 서비스를 분리", color: COLOR.blue, icon: "target" },
+  { title: "02  과도한 분산 방지", body: "불필요한 Microservice와 DB 계층 분리는 지양", color: COLOR.purple, icon: "layers" },
+  { title: "03  계약 기반 연계", body: "동기 REST / 비동기 Kafka, 공통 /api/v1 규약 적용", color: COLOR.teal, icon: "link" },
+  { title: "04  작업 단위 추적", body: "Job ID로 상태·결과·오류를 서비스 사이에서 일관 관리", color: COLOR.amber, icon: "trace" }
 ];
-
-flowNodes.forEach((node, index) => {
-  addTextShape(
-    slide,
-    pptx,
-    [
-      { text: node.title, options: { bold: true, fontSize: 11, color: COLOR.navy, breakLine: true } },
-      { text: node.body, options: { fontSize: 10, color: COLOR.text } }
-    ],
-    {
-      name: tag(REGION.flow, `Node${index + 1}`),
-      x: node.x,
-      y: 2.30,
-      w: 1.28,
-      h: 0.72,
-      shape: "roundRect",
-      fill: node.fill,
-      line: { color: node.accent, width: 0.8 },
-      fontSize: 10,
-      align: "center",
-      valign: "mid",
-      margin: [5, 5, 4, 27]
-    }
-  );
-  addShape(slide, pptx, {
-    name: tag(REGION.flow, `IconBadge${index + 1}`),
-    x: node.x + 0.08,
-    y: 2.48,
-    w: 0.24,
-    h: 0.24,
-    shape: "ellipse",
+principles.forEach((principle, index) => {
+  const x = index % 2 === 0 ? 0.65 : 3.83;
+  const y = index < 2 ? 5.15 : 7.02;
+  addRichCard(slide, pptx, {
+    name: tag(REGION.cards, `Principle${index + 1}`),
+    title: principle.title,
+    body: principle.body,
+    x,
+    y,
+    w: 2.92,
+    h: 1.52,
     fill: COLOR.white,
-    line: { color: node.accent, width: 0.6 }
+    line: { color: principle.color, width: 0.9 },
+    accent: principle.color,
+    titleSize: 11,
+    bodySize: 10,
+    margin: [47, 10, 10, 8],
+    valign: "mid"
   });
-  addIconSvg(slide, {
-    tag: tag(REGION.flow, `Icon${index + 1}`),
-    kind: node.icon,
-    color: node.accent,
-    x: node.x + 0.115,
-    y: 2.515,
-    w: 0.17,
-    h: 0.17
+  addIconBadge(slide, pptx, {
+    name: tag(REGION.cards, `Principle${index + 1}`),
+    kind: principle.icon,
+    color: principle.color,
+    x: x + 0.13,
+    y: y + 0.48,
+    size: 0.48
   });
-  if (index < flowNodes.length - 1) {
-    addArrow(slide, pptx, {
-      name: tag(REGION.flow, `Arrow${index + 1}`),
-      x: node.x + 1.34,
-      y: 2.54,
-      w: 0.22,
-      h: 0.18,
-      fill: COLOR.blue
-    });
-  }
 });
 
-addTextShape(slide, pptx, "A2A PoC", {
-  name: tag(REGION.flow, "ExtensionBadge"),
-  x: 2.28,
-  y: 3.13,
-  w: 1.12,
-  h: 0.29,
+addText(slide, pptx, "경계는 배포 편의가 아니라 책임·변경·장애영향을 기준으로 판단", {
+  name: tag(REGION.support, "DecisionRule"),
+  x: 1.28,
+  y: 8.55,
+  w: 4.94,
+  h: 0.31,
   shape: "roundRect",
-  fill: COLOR.green,
-  line: "none",
+  fill: COLOR.cyanSoft,
+  line: { color: COLOR.cyan, width: 0.8 },
   fontSize: 10,
-  bold: true,
-  color: COLOR.white,
-  align: "center",
-  valign: "mid",
-  margin: 0
-});
-addTextShape(slide, pptx, "업무위임·상태공유·결과반환", {
-  name: tag(REGION.flow, "ExtensionBand"),
-  x: 3.48,
-  y: 3.13,
-  w: 2.38,
-  h: 0.29,
-  shape: "roundRect",
-  fill: COLOR.greenSoft,
-  line: { color: "BFE8CF", width: 0.7 },
-  fontSize: 10,
-  bold: true,
-  color: COLOR.green,
-  align: "center",
-  valign: "mid",
-  margin: 0
-});
-addTextShape(slide, pptx, "Agent 간 상호운용을 검증하는 확장 연계 경로", {
-  name: tag(REGION.flow, "ExtensionNote"),
-  x: 1.35,
-  y: 3.43,
-  w: 4.82,
-  h: 0.18,
-  shape: "rect",
-  fill: "none",
-  line: "none",
-  fontSize: 10,
-  bold: true,
-  color: COLOR.green,
-  align: "center",
-  valign: "mid",
-  margin: 0
-});
-
-addPanel(slide, pptx, {
-  name: tag(REGION.cards, "Panel"),
-  x: 0.42,
-  y: 3.88,
-  w: 6.66,
-  h: 4.77,
-  fill: COLOR.panel
-});
-addTextShape(slide, pptx, "아키텍처 구성요소별 역할 이해", {
-  name: tag(REGION.cards, "Title"),
-  x: 0.62,
-  y: 4.06,
-  w: 4.10,
-  h: 0.40,
-  shape: "rect",
-  fill: "none",
-  line: "none",
-  fontSize: 17,
   bold: true,
   color: COLOR.navy,
-  valign: "mid",
-  margin: 0
-});
-
-const cards = [
-  {
-    title: "이용채널  |  민간 AI Agent",
-    body: "• 자연어 요청 분석 및 Tool 탐색\n• MCP 표준으로 Agent·LLM 연계\n• 플랫폼 독립형 공공서비스 호출",
-    x: 0.63,
-    y: 4.58,
-    fill: COLOR.blueSoft,
-    accent: COLOR.blue,
-    icon: "agent"
-  },
-  {
-    title: "공통통제  |  정부 MCP Gateway",
-    body: "• 인증·권한·유량·감사 단일 진입점\n• 정책 기반 MCP Server 안전 중계\n• 외부 Agent 직접 연결 차단",
-    x: 3.79,
-    y: 4.58,
-    fill: COLOR.purpleSoft,
-    accent: COLOR.purple,
-    icon: "gateway"
-  },
-  {
-    title: "Tool 제공  |  서비스별 MCP Server",
-    body: "• 개방 API를 MCP Tool로 변환·검증\n• Adapter 호출과 응답 정규화\n• 장애영향 기준 독립 구성",
-    x: 0.63,
-    y: 6.56,
-    fill: COLOR.tealSoft,
-    accent: COLOR.teal,
-    icon: "server"
-  },
-  {
-    title: "외부연계  |  DSP·기관 API·A2A",
-    body: "• DSP 인증·암복호화 및 API 호출\n• 표준 형식으로 결과 변환·반환\n• A2A Agent 상호운용 검증",
-    x: 3.79,
-    y: 6.56,
-    fill: COLOR.amberSoft,
-    accent: COLOR.amber,
-    icon: "api"
-  }
-];
-
-cards.forEach((card, index) => {
-  addCard(slide, pptx, {
-    name: tag(REGION.cards, `Card${index + 1}`),
-    title: card.title,
-    body: card.body,
-    x: card.x,
-    y: card.y,
-    w: 2.93,
-    h: 1.86,
-    fill: card.fill,
-    accent: card.accent,
-    titleSize: 12,
-    bodySize: 10
-  });
-  addShape(slide, pptx, {
-    name: tag(REGION.cards, `Accent${index + 1}`),
-    x: card.x,
-    y: card.y,
-    w: 0.10,
-    h: 1.86,
-    shape: "rect",
-    fill: card.accent,
-    line: "none"
-  });
-  addShape(slide, pptx, {
-    name: tag(REGION.cards, `IconBadge${index + 1}`),
-    x: card.x + 0.18,
-    y: card.y + 0.17,
-    w: 0.33,
-    h: 0.33,
-    shape: "ellipse",
-    fill: COLOR.white,
-    line: { color: card.accent, width: 0.7 }
-  });
-  addIconSvg(slide, {
-    tag: tag(REGION.cards, `Icon${index + 1}`),
-    kind: card.icon,
-    color: card.accent,
-    x: card.x + 0.235,
-    y: card.y + 0.225,
-    w: 0.22,
-    h: 0.22
-  });
-});
-
-addTextShape(slide, pptx, "핵심 메시지", {
-  name: tag(REGION.message, "Label"),
-  x: 0.58,
-  y: 8.93,
-  w: 1.16,
-  h: 0.37,
-  shape: "roundRect",
-  fill: COLOR.blue,
-  line: "none",
-  fontSize: 12,
-  bold: true,
-  color: COLOR.white,
   align: "center",
   valign: "mid",
   margin: 0
 });
-addTextShape(slide, pptx, "민간 AI 요청을 정부공통 Gateway와 서비스별 MCP Server로 통제하고 기관 API·A2A 확장경로까지 일관되게 연계", {
-  name: tag(REGION.message, "Band"),
-  x: 0.58,
-  y: 9.34,
-  w: 6.33,
-  h: 0.60,
-  shape: "roundRect",
-  fill: COLOR.navy,
-  line: "none",
-  fontSize: 12,
-  bold: true,
-  color: COLOR.white,
-  align: "center",
-  valign: "mid",
-  margin: [4, 8, 4, 8]
-});
+addKeyMessage(slide, pptx, "서비스는 응집도 기준으로 분리하고 데이터·호출·추적 규약은 공통 계약으로 통제합니다.");
 
 await writeDeck(pptx, output);
 console.log(output);

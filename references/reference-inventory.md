@@ -32,3 +32,11 @@
 5. 여러 페이지면 먼저 레이아웃 배정표를 작성하고 인접 페이지의 골격 반복을 피한다.
 6. 색상·크롬·밀도는 항상 같은 제안서 계열로 되돌린다.
 7. 참조 PPTX 자체를 결과물로 복사하거나 수정하지 않는다. PptxGenJS로 구조를 재구성한다.
+
+## 검증된 reference-led KISTI 예시
+
+- 위치: `assets/examples/reference-led-kisti/`
+- 구성: 편집형 단일 장표 PPTX 7개와 native preview 7개. 재현 가능한 소스는 `assets/pptxgenjs-kit/`의 `proposal-kit.mjs`·`page-template.mjs`·`reference-layouts.mjs`에 단일화한다.
+- 용도: 21·27·42·52 장표 계보를 한 디자인 시스템으로 통합하면서 계층형·기본형·파이프라인·산출물형·Stage Gate·장애대응·품질허브로 확장하는 예시.
+- 사용 전 [reference-led-patterns.md](reference-led-patterns.md)를 읽고, 예시의 문구가 아니라 관계 유형·읽기 경로·공통 크롬을 재사용한다.
+- 새 작업 폴더는 `scripts/scaffold-page.ps1`로 만들고, 복사된 `reference-layouts.mjs`를 좌표·objectName 패턴 라이브러리로 사용한다.

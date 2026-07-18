@@ -63,6 +63,13 @@ SVG icons remain images, even though they render sharply. Use native shapes for 
 - Keep information density comparable to the reference deck without inventing facts.
 - Treat large empty regions beside compressed content as a layout-routing problem, not a decoration problem.
 
+## PptxGenJS 4.0.1 margin order
+
+- Interpret a four-value text margin as `[left, top, right, bottom]`.
+- Verify the emitted margin with OfficeCLI after introducing a new card family.
+- Reserve icon space on the matching side. For a left icon, increase the first value; for a top-right icon, increase the third value and keep the top value modest.
+- Do not infer margin order from CSS conventions. A wrong order can create icon-title collisions while the nominal font size remains unchanged.
+
 ## Reuse boundaries
 
 Reuse:
